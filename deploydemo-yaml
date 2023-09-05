@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: sboot-test
+  name: sboot-test
+  namespace: kowshi123
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sboot-test
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: sboot-test
+    spec:
+      containers:
+      - image: adikrthik/springboot
+        name: springboot
+        resources: {}
+status: {}
