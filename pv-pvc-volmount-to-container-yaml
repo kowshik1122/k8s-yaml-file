@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: test
+  name: test
+  namespace: kowshi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: test
+    spec:
+      volumes:
+      - name: test
+        persistentVolumeClaim:
+          claimName: test
+      - name: test1
+        persistentVolumeClaim:
+          claimName: test1
+      containers:
+      - image: adikarthik/springboot
+        name: springboot
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /usr/share/abc
+          name: test
+        - mountPath: /usr/share/xyz
+          name: test1
+        env:
+        - name: DEMO
+          value: "This is a test env variable"
+        - name: DEMO_CM
+          valueFrom:
+            configMapKeyRef:
+              name: test
+              key: username
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          periodSeconds: 5
+          initialDelaySeconds: 30
+        livenessProbe:
+          httpGet:
+            path: /actuator
+            port: 8080
+          periodSeconds: 5
+          initialDelaySeconds: 30
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - echo $DEMO > /opt/xyz/ab.txt
+        image: busybox
+        volumeMounts:
+        - mountPath: /opt/xyz
+          name: test1
+        env:
+        - name: DEMO
+          value: "This is a test env variable"
+        - name: DEMO_CM
+          valueFrom:
+            configMapKeyRef:
+              name: test
+              key: ph
+        imagePullPolicy: Always
+        name: test45
+status: {}
