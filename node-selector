@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: sboot
+  name: testaks
+  namespace: kowshi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sboot
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: sboot
+    spec:
+      affinity:
+       nodeAffinity:
+         requiredDuringSchedulingIgnoredDuringExecution:
+           nodeSelectorTerms:
+           - matchExpressions:
+             - key: nodeselect
+               operator: In
+               values:
+               - test123
+      containers:
+      - image: adikarthik/springboot
+        name: springboot
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          periodSeconds: 5
+          initialDelaySeconds: 30
+        livenessProbe:
+          httpGet:
+            path: /actuator
+            port: 8080
+          periodSeconds: 5
+status: {}
