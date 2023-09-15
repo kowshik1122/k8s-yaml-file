@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: rest
+  name: rest
+  namespace: kowshi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rest
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: rest
+    spec:
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - spring
+            topologyKey: kubernetes.io/hostname
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - demo
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - image: adikarthik/rest
+        name: rest
+        ports:
+        - containerPort: 8080
+        resources: {}
+status: {}
